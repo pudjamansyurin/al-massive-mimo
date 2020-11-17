@@ -1,0 +1,6 @@
+Precoding berfungi untuk meminimalisir interferensi antar user. Sehingga ketika Tx 
+sudah melakukan precoding
+
+User akan menerima perkalian sinyal precoded dengan kanal ditambah noise dimana 
+hasil sinyal yang diterima sudah terpetakan untuk masing masing user karena proses precoding tsb,
+Sehingga tidak perlu proses decoding

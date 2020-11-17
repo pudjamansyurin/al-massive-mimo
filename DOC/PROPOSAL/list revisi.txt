@@ -1,0 +1,21 @@
+Revisi Bu Titik:
+- Kanal rayleigh dan random LOS (Cek kata sambung yg tepat)-->(done)
+- Definisi random LOS perlu diperhatikan--> (done)
+- Perhatikan definisi Massive MIMO, apa bedanya dengan MIMO konvensional--> (done)
+- Perhatikan penentuan kanal, tidak hanya rayleigh, tapi juga freq selective --> (done)
+- Konsistensi notasi --> (done)
+- Permasalahan sesuaikan judul tesis --> (done)
+
+Revisi Pak Eko:
+- Batasan no 2, definisi jumlah antena BTS jauh lebih banyak dari jumlah user yang dilayani belum jelas --> (recheck)
+- Pada gambar 2.2 ada variabel MS1, MS2, MS3 yang tidak pernah dibahas di subbab 2.2.4 (dicek juga gbr lainnya) --> (done)
+- Pada persamaan ditemukan operasi matematika *. Bagian belakang (Done)
+
+TAMBAHAN
+- Jangan gunakan kata tanya pada rumusan masalah --> (done)
+- Random LOS dipakai untuk menggambarkan LOS tapi dipakai di dense urban --> (done)
+- Tambahkan bagaimana menentukan jumlah antena BTS di batasan masalah
+- Tetap pakai dense urban untuk LOS -->(done)
+- Tentukan delay spread untuk dense urban, kemudian tentukan coherence bandwidth --> (Done)
+- Metode pembangkitan kanal freq selective rayleigh --> (done)
+- Penjelasan freq selective di bab 3 --> (done)
