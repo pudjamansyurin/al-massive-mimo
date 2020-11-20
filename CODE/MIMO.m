@@ -2,21 +2,21 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = 100;
+M = 20:10:100;
 N = 100;                % Number of occupied subcarrier
-K = 120;                 % Number of Rx antenna (= number of UE)
+K = 10;                 % Number of Rx antenna (= number of UE)
 % K = 10;
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Number bit per symbol
 nCP = ceil(0.25*N);     % Number of cyclic Prefix (25% of NFFT)
-SNR_dB = 0:1:15;    % list of SNR [dB] values to be simulated
-% SNR_dB = 10;
-% Rn = 10.^(-SNR_dB/10);
-% SNR_L = 10^(SNR_dB/10);
+% SNR_dB = 0:1:15;    % list of SNR [dB] values to be simulated
+SNR_dB = 20;
+Rn = 10.^(-SNR_dB/10);
+SNR_L = 10^(SNR_dB/10);
 FRM = 1;              % Number of data frame
-tau_p = 130;
+tau_p = 30;
 BPU = N*2;              % (Bit/User)  
 NBPU = BPU*FRM;
 
@@ -28,12 +28,12 @@ Code = {
      'MMSE' 
 };
 Channel = { 
-%     'LOS' 
+    'LOS' 
     'Rayleigh' 
 };
 CSI = {
-    'Perfect CSI'
-    'Estimated CSI'    
+%     'Perfect CSI'
+    'Imperfect CSI'    
 };
 
 %  ===================START SIMULATION====================
@@ -121,7 +121,7 @@ for Ei = 1:length(CSI);
                             A = zeros(Mo,Ko,N);
                             C = zeros(Mo,1,N);
                             for i = 1:N;
-                                [A(:,:,i), C(:,:,i)] = genPrecoding(Code(Ci), Ko, Mo, Hf(:,:,i), S(:,:,i),N,Pc);
+                                [A(:,:,i), C(:,:,i)] = genPrecoding(Code(Ci), Ko, Mo, Hf(:,:,i), S(:,:,i),N,Pc,SNR_L);
                             end
 
                             % Transform to time domain
@@ -255,7 +255,7 @@ for Ei=1:length(CSI);
         for Ci=1:length(Code);
             SEE = SE(Ei,Chi,Ki,Ci,:);
             SEX = reshape(SEE, [1, numel(SEE)]);
-            plot(M, SEX, genMark(Ei, Ci, Chi));
+            plot(M, SEX, genMark(Chi, Ci, Ei));
             hold on;
 
             lgd(i) = strcat(CSI(Ei), {', '}, Channel(Chi), {', '}, Code(Ci)); 
