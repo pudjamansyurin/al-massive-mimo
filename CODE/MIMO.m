@@ -2,7 +2,7 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = 20:10:100;
+M = 100;
 N = 100;                % Number of occupied subcarrier
 K = 10;                 % Number of Rx antenna (= number of UE)
 % K = 10;
@@ -11,12 +11,12 @@ beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Number bit per symbol
 nCP = ceil(0.25*N);     % Number of cyclic Prefix (25% of NFFT)
-% SNR_dB = 0:1:15;    % list of SNR [dB] values to be simulated
-SNR_dB = 20;
-Rn = 10.^(-SNR_dB/10);
-SNR_L = 10^(SNR_dB/10);
-FRM = 1;              % Number of data frame
-tau_p = 30;
+SNR_dB = 0:1:15;    % list of SNR [dB] values to be simulated
+% SNR_dB = 10;
+% Rn = 10.^(-SNR_dB/10);
+SNR_L = 10^(10/10);
+FRM = 30;              % Number of data frame
+tau_p = 20;
 BPU = N*2;              % (Bit/User)  
 NBPU = BPU*FRM;
 
@@ -32,15 +32,15 @@ Channel = {
     'Rayleigh' 
 };
 CSI = {
-%     'Perfect CSI'
-    'Imperfect CSI'    
+    'Perfect CSI'
+%     'Imperfect CSI'    
 };
 
 %  ===================START SIMULATION====================
 fprintf('running numerical simulation. \n');
 %====================TRANSMITTER SIDE=====================
 Prog = 0;
-OneProg = (100/(length(CSI)*length(K)*length(M)*length(Channel)*length(SNR_dB)*length(FRM)*length(Code)));
+OneProg = (100/(length(CSI)*length(K)*length(M)*length(Channel)*length(SNR_dB)*FRM*length(Code)));
 
 % Loop CSI --------------------------
 SE = zeros(length(CSI), length(Channel), length(K), length(Code), length(M));
@@ -242,9 +242,9 @@ for Ei=1:length(CSI);
 end
 grid on;
 legend(lgd);
-title('Bit Error Rate MU-Massive MIMO');
+title('Bit Error Rate (BER) MU-Massive MIMO');
 xlabel('SNR(dB)');
-ylabel ('BER');
+ylabel ('Bit Error Rate (BER)');
         
 % Plot Spectral Efficiency MU-Massive MIMO (Precoding)
 figure(2);
@@ -266,7 +266,7 @@ end
 grid on;
 legend(lgd);
 title(sprintfc('Spectral Efficiency MU-Massive MIMO (K = %d)', K));
-xlabel('Jumlah Antena BTS (M)');
+xlabel('Number of BS Antenna (M)');
 ylabel('Spectral Efficiency (Bit/s/Hz)');
     
 % Plot Spectral Efficiency MU-Massive MIMO (User)
@@ -280,8 +280,8 @@ for Ki = 1:length(K);
 end
 grid on;
 legend(sprintfc('K = %d', K));
-title('Spectral Efficiency MU-Massive MIMO (User)');
-xlabel('Jumlah Antena BTS (M)');
+title('Spectral Efficiency MU-Massive MIMO');
+xlabel('Number of BS Antenna (M)');
 ylabel('Spectral Efficiency (Bit/s/Hz)');
 
 % Plot Spectral Efficiency MU-Massive MIMO (User)
@@ -295,8 +295,8 @@ for Mi = 1:length(M);
 end
 grid on;
 legend(sprintfc('M = %d', M));
-title('Spectral Efficiency MU-Massive MIMO (Antenna)');
-xlabel('Jumlah Antena BTS (K)');
+title('Spectral Efficiency MU-Massive MIMO');
+xlabel('Number of Users (K)');
 ylabel('Spectral Efficiency (Bit/s/Hz)');
 
 figure(5);
@@ -306,9 +306,9 @@ for Chi=1:length(Channel);
 end
 grid on;
 legend(strcat({''}, Channel));
-title('Mean Square Error (MSE) Estimasi Kanal');
+title('MSE of Channel Estimation');
 xlabel('SNR (dB)');
-ylabel('MSE');
+ylabel('Mean-Squared Error (MSE)');
 
 % figure(6);
 % plot(M,SE_LOS);
