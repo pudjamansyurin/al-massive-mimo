@@ -2,10 +2,9 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = 100;
-N = 100;                % Number of occupied subcarrier
-K = 10;                 % Number of Rx antenna (= number of UE)
-% K = 10;
+M = 100;              % Number of occupied subcarrier
+N = 100;                 % Number of Rx antenna (= number of UE)
+K = 20;
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
@@ -15,7 +14,7 @@ SNR_dB = 0:1:15;    % list of SNR [dB] values to be simulated
 % SNR_dB = 10;
 % Rn = 10.^(-SNR_dB/10);
 SNR_L = 10^(10/10);
-FRM = 30;              % Number of data frame
+FRM = 300;              % Number of data frame
 tau_p = 20;
 BPU = N*2;              % (Bit/User)  
 NBPU = BPU*FRM;
@@ -32,8 +31,8 @@ Channel = {
     'Rayleigh' 
 };
 CSI = {
-    'Perfect CSI'
-%     'Imperfect CSI'    
+%     'Perfect CSI'
+    'Imperfect CSI'    
 };
 
 %  ===================START SIMULATION====================
@@ -242,7 +241,7 @@ for Ei=1:length(CSI);
 end
 grid on;
 legend(lgd);
-title('Bit Error Rate (BER) MU-Massive MIMO');
+% title('Bit Error Rate (BER) MU-Massive MIMO');
 xlabel('SNR(dB)');
 ylabel ('Bit Error Rate (BER)');
         
@@ -265,7 +264,7 @@ for Ei=1:length(CSI);
 end
 grid on;
 legend(lgd);
-title(sprintfc('Spectral Efficiency MU-Massive MIMO (K = %d)', K));
+% title(sprintfc('Spectral Efficiency MU-Massive MIMO (K = %d)', K));
 xlabel('Number of BS Antenna (M)');
 ylabel('Spectral Efficiency (Bit/s/Hz)');
     
@@ -280,7 +279,7 @@ for Ki = 1:length(K);
 end
 grid on;
 legend(sprintfc('K = %d', K));
-title('Spectral Efficiency MU-Massive MIMO');
+% title('Spectral Efficiency MU-Massive MIMO');
 xlabel('Number of BS Antenna (M)');
 ylabel('Spectral Efficiency (Bit/s/Hz)');
 
@@ -295,7 +294,7 @@ for Mi = 1:length(M);
 end
 grid on;
 legend(sprintfc('M = %d', M));
-title('Spectral Efficiency MU-Massive MIMO');
+% title('Spectral Efficiency MU-Massive MIMO');
 xlabel('Number of Users (K)');
 ylabel('Spectral Efficiency (Bit/s/Hz)');
 
@@ -306,7 +305,7 @@ for Chi=1:length(Channel);
 end
 grid on;
 legend(strcat({''}, Channel));
-title('MSE of Channel Estimation');
+% title('MSE of Channel Estimation');
 xlabel('SNR (dB)');
 ylabel('Mean-Squared Error (MSE)');
 
