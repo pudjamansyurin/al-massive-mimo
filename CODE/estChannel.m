@@ -5,7 +5,9 @@ function [ Hf_est ] = estChannel( Hf, Xpf, N0, nf )
 Hft = Hf';
 Hfy = Hft*Xpf;
 Yp = Hfy + sqrt(N0)*nf;
-Hf_est = Yp/Xpf;
+Yp = Yp*conj(Xpf);
+% Hf_est = Yp/Xpf;
+Hf_est = Yp/20;
 Hf_est = Hf_est';
 
 end

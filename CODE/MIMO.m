@@ -2,18 +2,18 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = 50:50:300;              % Number of occupied subcarrier
-N = 300;                 % Number of Rx antenna (= number of UE)
+M = 100;              % Number of occupied subcarrier
+N = 100;                 % Number of Rx antenna (= number of UE)
 K = 20;
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Number bit per symbol
 nCP = ceil(0.25*N);     % Number of cyclic Prefix (25% of NFFT)
-% SNR_dB = 0:1:15;    % list of SNR [dB] values to be simulated
-SNR_dB = 0;
-Rn = 10.^(-SNR_dB/10);
-SNR_L = 10^(SNR_dB/10);
+SNR_dB = 0:1:10;    % list of SNR [dB] values to be simulated
+% SNR_dB = 0;
+% Rn = 10.^(-SNR_dB/10);
+% SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
 FRM = 1;              % Number of data frame
 tau_p = 20;
 BPU = N*2;              % (Bit/User)  
@@ -31,8 +31,8 @@ Channel = {
     'Rayleigh' 
 };
 CSI = {
-    'Perfect CSI'
-%     'Imperfect CSI'    
+%     'Perfect CSI'
+    'Imperfect CSI'    
 };
 
 %  ===================START SIMULATION====================
@@ -120,7 +120,7 @@ for Ei = 1:length(CSI);
                             A = zeros(Mo,Ko,N);
                             C = zeros(Mo,1,N);
                             for i = 1:N;
-                                [A(:,:,i), C(:,:,i)] = genPrecoding(Code(Ci), Ko, Mo, Hf(:,:,i), S(:,:,i),N,Pc,SNR_L);
+                                [A(:,:,i), C(:,:,i)] = genPrecoding(Code(Ci), Ko, Mo, Hf(:,:,i), S(:,:,i),N,Pc);
                             end
 
                             % Transform to time domain
