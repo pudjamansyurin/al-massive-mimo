@@ -2,9 +2,9 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = 100;              % Number of occupied subcarrier
+M = [30 100];              % Number of occupied subcarrier
 N = 100;                 % Number of Rx antenna (= number of UE)
-K = 20;
+K = 5:5:50;
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
@@ -24,10 +24,10 @@ symbol = QAM_symbol / sqrt(2);
 Code = { 
      'ZF' 
 %      'MRT' 
-     'MMSE' 
+%      'MMSE' 
 };
 Channel = { 
-    'LOS' 
+%     'LOS' 
     'Rayleigh' 
 };
 CSI = {
