@@ -8,10 +8,10 @@ for Ki = 1:K;
 end
 
 % Signal Power
-Sig = diag(Pc)*diag(abs(Hf*A).^2);
-Sig2 = abs(Hf*A).^2;
+Sig = Pc*diag(abs(Hf*A).^2);
+Sig2 = Pc*abs(Hf*A).^2;
 % Interference Power
-I = diag(Pc)*sum(abs(Hf*A).^2,2)-Sig; 
+I = Pc*sum(abs(Hf*A).^2,2)-Sig; 
 % Noise Power
 Noise = repmat(10.^(-SNR_dB/10),K,1);
 % SINR of ZF at all user (simulation)

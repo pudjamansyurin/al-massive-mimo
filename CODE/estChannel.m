@@ -6,8 +6,8 @@ Hft = Hf';
 Hfy = Hft*Xpf;
 Yp = Hfy + sqrt(N0)*nf;
 Yp = Yp*conj(Xpf);
-% Hf_est = Yp/Xpf;
-Hf_est = Yp/20;
+Hf_est = Yp/Xpf;
+% Hf_est = Yp/20;
 Hf_est = Hf_est';
 
 end

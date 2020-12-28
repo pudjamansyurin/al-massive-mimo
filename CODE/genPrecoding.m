@@ -1,4 +1,4 @@
-function [A, C] = genPrecoding(type,K,M,Hf,S,N,Pc)
+function [A, C] = genPrecoding(type,K,M,Hf,S,N,Pc,SNR_L)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -6,7 +6,7 @@ function [A, C] = genPrecoding(type,K,M,Hf,S,N,Pc)
 factor = 0;
 if strcmp(type, 'MMSE')
     % MMSE Precoding
-    A =  Hf'/(Hf*Hf'+ (1/Pc)*diag(ones(K,1)));  % Precoding matrix 
+    A =  Hf'/(Hf*Hf'+ K/SNR_L*diag(ones(K,1)));  % Precoding matrix 
 elseif strcmp(type, 'ZF')   
     A = Hf'/(Hf*Hf');
 else
