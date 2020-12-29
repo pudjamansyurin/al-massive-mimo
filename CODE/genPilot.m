@@ -1,4 +1,4 @@
-function [ Xpf ] = genPilot( tau_p, K, N )
+function [ Xpf,Xp ] = genPilot( tau_p, K, N )
 %UNTITLED9 Summary of this function goes here
 %   Detailed explanation goes here
 
