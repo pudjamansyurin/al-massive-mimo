@@ -2,20 +2,20 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = 500;              % Number of occupied subcarrier
-N = 500;                 % Number of Rx antenna (= number of UE)
-K = 20;
+M = 20;              % Number of occupied subcarrier
+N = 20;                 % Number of Rx antenna (= number of UE)
+K = 10;
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Numer \bit per symbol
 nCP = ceil(0.25*N);     % Number of cyclic Prefix (25% of NFFT)
-SNR_dB = 0:1:10;    % list of SNR [dB] values to be simulated
-% SNR_dB = 20;
+% SNR_dB = 0:1:10;    % list of SNR [dB] values to be simulated
+SNR_dB =0;
 % Rn = 10.^(-SNR_dB/10);
 SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
 FRM = 1;              % Number of data frame
-tau_p = 20;
+tau_p = 10;
 BPU = N*2;              % (Bit/User)  
 NBPU = BPU*FRM;
 
@@ -24,7 +24,7 @@ symbol = QAM_symbol / sqrt(2);
 Code = { 
      'ZF' 
 %      'MRT' 
-     'MMSE' 
+%      'MMSE' 
 };
 Channel = { 
 %     'LOS' 
@@ -32,7 +32,7 @@ Channel = {
 };
 CSI = {
     'Perfect CSI'
-%     'Imperfect CSI'    
+    'Estimated CSI'    
 };
 
 %  ===================START SIMULATION====================
@@ -94,13 +94,13 @@ for Ei = 1:length(CSI);
                         [Ht, Hf] = genChannel(Cho,Ko,L,Mo,N,beta,teta);
 
                         % Channel estimation ---------------------------
-                        if strcmp(Eo, 'Estimated CSI')
+                        if strcmp(Eo, 'Etimated CSI')
                             [ nt, nf ] = genAWGN ( Mo, tau_p, N );                        
-                            Xpf = genPilot( tau_p, K, N );
+                            [Xpf,Xp,fi] = genPilot( tau_p, K, N );
                             
                             Hf_est = zeros(Ko,Mo,N);
                             for n = 1:N;  
-                                Hf_est(:,:,n) = estChannel( Hf(:,:,n), Xpf(:,:,n), N0, nf(:,:,n), tau_p, SNR_L );
+                                Hf_est(:,:,n) = estChannel( Hf(:,:,n), Xpf(:,:,n), N0, nf(:,:,n), tau_p, SNR_L,fi );
                             end
                             
                             Error = abs((Hf_est - Hf).^2);

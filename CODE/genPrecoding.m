@@ -13,8 +13,8 @@ else
     % MRT Precodng
     A = 1/M*Hf';
 end
-% factor = factor+trace(A*A')/N;    %Precoding Factor
-% A = A./sqrt(factor); % Scaled output
+factor = factor+trace(A*A')/N;    %Precoding Factor
+A = A./sqrt(factor); % Scaled output
 % Precoded Vector
 C = A*S;  
 end

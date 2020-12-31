@@ -1,9 +1,9 @@
-function [ Xpf,Xp ] = genPilot( tau_p, K, N )
+function [ Xpf,Xp,fi ] = genPilot( tau_p, K, N )
 %UNTITLED9 Summary of this function goes here
 %   Detailed explanation goes here
 
 % Generate a random complex matrix 
-X = complex(rand(tau_p), rand(tau_p)) / sqrt(2);
+X = complex(rand(tau_p), rand(K)) / sqrt(2);
 % Factorize the matrix
 [Q, R] = qr(X);
 % Unitary matrix M x N
