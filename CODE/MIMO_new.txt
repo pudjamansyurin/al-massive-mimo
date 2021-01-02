@@ -2,26 +2,26 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = [30 100];              % Number of occupied subcarrier
+M = 20:10:100;              % Number of occupied subcarrier
 N = 100;                 % Number of Rx antenna (= number of UE)
-K = 5:5:40;
+K = 5;
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Numer \bit per symbol
 nCP = ceil(0.05*N);     % Number of cyclic Prefix (25% of NFFT)
 % SNR_dB = -10:1:10;    % list of SNR [dB] values to be simulated
-SNR_dB = 10;
+SNR_dB = -10;
 SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
 FRM = 1;              % Number of data frame
-tau_p = 30;
+tau_p = 10;
 BPU = N*2;              % (Bit/User)  
 NBPU = BPU*FRM;
 
 QAM_symbol = [-1 1; 1 1; 1 -1 ;-1 -1];
 symbol = QAM_symbol / sqrt(2); 
 Code = { 
-%      'ZF' 
+     'ZF' 
 %      'MRT' 
      'MMSE' 
 };
@@ -31,7 +31,7 @@ Channel = {
 };
 CSI = {
     'Perfect CSI'
-%     'Imperfect CSI'    
+%     'Estimated CSI'    
 };
 
 %  ===================START SIMULATION====================
@@ -51,7 +51,7 @@ for Ei = 1:length(CSI);
         Ko = K(Ki);
         Pc = 1/K(Ki);   % Power control each user
         for k = 1:Ko
-            sinteta(k) = -1+(2*k-1)/Ko;
+            sinteta(k) = -1+((2*k-1)/Ko);
         end
         teta = asind(sinteta);
         
@@ -93,14 +93,13 @@ for Ei = 1:length(CSI);
                         [Ht, Hf] = genChannel(Cho,Ko,L,Mo,N,beta,teta);
 
                         % Channel estimation ---------------------------
-                        if strcmp(Eo, 'Imperfect CSI')
+                        if strcmp(Eo, 'Etimated CSI')
                             [ nt, nf ] = genAWGN ( Mo, tau_p, N );                        
                             [Xpf,Xp,fi] = genPilot( tau_p, K, N );
                             
                             Hf_est = zeros(Ko,Mo,N);
                             for n = 1:N;  
-                                fi2 = fft(fi,N,3);
-                                Hf_est(:,:,n) = estChannel( Hf(:,:,n), Xpf(:,:,n), N0, nf(:,:,n), tau_p, SNR_L,fi2(:,:,n));
+                                Hf_est(:,:,n) = estChannel( Hf(:,:,n), Xpf(:,:,n), N0, nf(:,:,n), tau_p, SNR_L,fi );
                             end
                             
                             Error = abs((Hf_est - Hf).^2);
@@ -219,7 +218,7 @@ for Ei = 1:length(CSI);
          % =======================Analytical SE NLOS=========================
         SE_NLOS(Mi) = Ko*log2(1+((Mo-1)./((Ko-1)*(Mo-1)/Mo+1/SNR_L)));
         % =======================Analytical SE NLOS zf======================
-        SE_NZF(Mi) = Ko*log2(1+1/Ko*(Mo-Ko));
+        SE_NZF(Mi) = Ko*log2(1+1/K*(Mo-Ko));
          end % End of tx antenna loop
     end % End of user loop
 end
@@ -255,15 +254,15 @@ for Ei=1:length(CSI);
         for Ci=1:length(Code);
             SEE = SE(Ei,Chi,Ki,Ci,:);
             SEX = reshape(SEE, [1, numel(SEE)]);
-            plot(M, SEX, genMark(Chi, Ei, Ci));
+            plot(M, SEX, genMark(Chi, Ci, Ei));
             hold on;    
             lgd(i) = strcat(CSI(Ei), {', '}, Channel(Chi), {', '}, Code(Ci)); 
             i = i + 1;
         end    
     end
 end
-% plot(M,SE_NZF,'--')
-% lgd(i) = strcat({'Lower bound NLOS'}); 
+plot(M,SE_NLOS,'--')
+lgd(i) = strcat({'Lower bound NLOS'}); 
 legend(lgd);
 grid on;
 % title(sprintfc('Spectral Efficiency MU-Massive MIMO (K = %d)', K));

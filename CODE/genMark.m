@@ -3,7 +3,7 @@ function [ mark ] = genMark( iline, icolor, ishape )
 %   Detailed explanation goes here
 
 line = {'-' '-.' '--'};
-color = {'r' 'b' 'g' 'c' 'm' 'y' 'k'}; 
+color = {'b' 'r' 'g' 'c' 'm' 'y' 'k'}; 
 shape = {'s' '*' 'o'};
 
 if iline > length(line)
