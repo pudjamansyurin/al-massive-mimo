@@ -4,7 +4,7 @@ clear all; close all; clc;
 % M = 50;               % Number of Tx antenna (in one BS)
 M = [30 100];              % Number of occupied subcarrier
 N = 100;                 % Number of Rx antenna (= number of UE)
-K = 5:5:40;
+K = 5:5:60;
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
@@ -14,7 +14,7 @@ nCP = ceil(0.05*N);     % Number of cyclic Prefix (25% of NFFT)
 SNR_dB = 10;
 SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
 FRM = 1;              % Number of data frame
-tau_p = 30;
+tau_p = 20;
 BPU = N*2;              % (Bit/User)  
 NBPU = BPU*FRM;
 
