@@ -16,9 +16,8 @@ end
 % 
 %  factor = sqrt(factor+(abs(A)).^2);
 %  A = A./factor; % Scaled output
-factor = factor+trace(A*A')/N;    %Precoding Factor
-A = A./sqrt(factor); % Scaled output
-% Precoded Vector
+% factor = factor+trace(A*A')/N;    %Precoding Factor
+% A = A./sqrt(factor); % Scaled output
+% % Precoded Vector
 C = A*S;  
 end
-

@@ -2,16 +2,16 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = 50:50:350;              % Number of occupied subcarrier
-N = 350;                 % Number of Rx antenna (= number of UE)
-K = 30;
+M = 100;              % Number of occupied subcarrier
+N = 100;                 % Number of Rx antenna (= number of UE)
+K = 10;
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Numer \bit per symbol
 nCP = ceil(0.05*N);     % Number of cyclic Prefix (25% of NFFT)
-% SNR_dB = -10:2:20;    % list of SNR [dB] values to be simulated
-SNR_dB = 0;
+SNR_dB = 0:2:10;    % list of SNR [dB] values to be simulated
+% SNR_dB = 0;
 SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
 FRM = 1;              % Number of data frame
 tau_p = 10;
@@ -26,8 +26,8 @@ Code = {
      'MMSE' 
 };
 Channel = { 
-    'LOS' 
-%     'Rayleigh' 
+%     'LOS' 
+    'Rayleigh' 
 };
 CSI = {
     'Perfect CSI'
@@ -327,6 +327,3 @@ ylabel('Spectral Efficiency (Bit/s/Hz)');
 % % Save to log
 % filename = strcat('logs/', datestr(now, 30), '.mat');
 % save(filename);
-
-
-    
