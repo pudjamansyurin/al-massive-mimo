@@ -2,26 +2,26 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = [30 100];              % Number of occupied subcarrier
+M = 20:10:100;              % Number of occupied subcarrier
 N = 100;                 % Number of Rx antenna (= number of UE)
-K = 5:5:60;
+K = 10;
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Numer \bit per symbol
 nCP = ceil(0.05*N);     % Number of cyclic Prefix (25% of NFFT)
-% SNR_dB = -10:1:10;    % list of SNR [dB] values to be simulated
-SNR_dB = 10;
+% SNR_dB = -10:2:20;    % list of SNR [dB] values to be simulated
+SNR_dB = -10;
 SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
 FRM = 1;              % Number of data frame
-tau_p = 20;
+tau_p = 25;
 BPU = N*2;              % (Bit/User)  
 NBPU = BPU*FRM;
 
 QAM_symbol = [-1 1; 1 1; 1 -1 ;-1 -1];
 symbol = QAM_symbol / sqrt(2); 
 Code = { 
-%      'ZF' 
+     'ZF' 
 %      'MRT' 
      'MMSE' 
 };
@@ -100,7 +100,7 @@ for Ei = 1:length(CSI);
                             Hf_est = zeros(Ko,Mo,N);
                             for n = 1:N;  
                                 fi2 = fft(fi,N,3);
-                                Hf_est(:,:,n) = estChannel( Hf(:,:,n), Xpf(:,:,n), N0, nf(:,:,n), tau_p, SNR_L,fi2(:,:,n));
+                                Hf_est(:,:,n) = estChannel( Hf(:,:,n), Xpf(:,:,n), N0, nf(:,:,n), tau_p, SNRo,fi2(:,:,n));
                             end
                             
                             Error = abs((Hf_est - Hf).^2);
@@ -255,7 +255,7 @@ for Ei=1:length(CSI);
         for Ci=1:length(Code);
             SEE = SE(Ei,Chi,Ki,Ci,:);
             SEX = reshape(SEE, [1, numel(SEE)]);
-            plot(M, SEX, genMark(Chi, Ei, Ci));
+            plot(M, SEX, genMark(Chi, Ci, Ei));
             hold on;    
             lgd(i) = strcat(CSI(Ei), {', '}, Channel(Chi), {', '}, Code(Ci)); 
             i = i + 1;

@@ -16,5 +16,3 @@ I = Pc*sum(abs(Hf*A).^2,2)-Sig;
 Noise = repmat(10.^(-SNR_dB/10),K,1);
 % SINR of ZF at all user (simulation)
 SINR = Sig./(I+Noise);
-
-
