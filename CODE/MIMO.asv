@@ -2,7 +2,7 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = 20:10:100;              % Number of occupied subcarrier
+M = 20:20:100;              % Number of occupied subcarrier
 N = 100;                 % Number of Rx antenna (= number of UE)
 K = 10;
 L = 4;                  % Channel tap frequency selective
@@ -10,11 +10,11 @@ beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Numer \bit per symbol
 nCP = ceil(0.05*N);     % Number of cyclic Prefix (25% of NFFT)
-% SNR_dB = 0:2:10;    % list of SNR [dB] values to be simulated
-SNR_dB = 10;
+% SNR_dB = -10:2:20;    % list of SNR [dB] values to be simulated
+SNR_dB = -5;
 SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
 FRM = 1;              % Number of data frame
-tau_p = 25;
+tau_p = 10;
 BPU = N*2;              % (Bit/User)  
 NBPU = BPU*FRM;
 
@@ -57,6 +57,8 @@ for Ei = 1:length(CSI);
         
         % Loop tx antenna --------------------------
         SE_LOS = zeros(1,length(M));
+        SE_NLOS = zeros(1,length(M));
+        SE_NZF = zeros(1,length(M));
         for Mi = 1:length(M);
             Mo = M(Mi);
 
@@ -164,7 +166,7 @@ for Ei = 1:length(CSI);
                             SINR = zeros(Ko,1,N);
                             sigmaA = zeros(Mo,Mo,N);
                             for n = 1:N;
-                                [SINR(:,:,n),Sig,I,Noise,Pt,AA,Sig2] = calcSINR(A(:,:,n), Hf(:,:,n), SNRo, Ko, Pc);
+                                [SINR(:,:,n),Sig,I,Noise,Pt,AA,Sig2] = calcSINR(A(:,:,n), Hf(:,:,n), SNR_dB, Ko, Pc);
                             end
 
                             %reshape 3D to 2D matrix
@@ -217,9 +219,9 @@ for Ei = 1:length(CSI);
         AFsum(Mi) = AFsum(Mi)/max(AFsum(Mi));
         SE_LOS(Mi) = Ko*log2(1+(Mo./(AFsum(Mi)+1/SNR_L)));
          % =======================Analytical SE NLOS=========================
-        SE_NLOS(Mi) = Ko*log2(1+((Mo-1)./((Ko-1)*(Mo-1)/Mo+1/SNR_L)));
+        SE_NLOS(Mi) = Ko*log2(1+((Mo-1)./((Ko-1)*(Mo-1)/Mo+Ko+1/SNR_L)));
         % =======================Analytical SE NLOS zf======================
-        SE_NZF(Mi) = Ko*log2(1+1/Ko*(Mo-Ko));
+        SE_NZF(Mi) = Ko*log2(1+Pc*(Mo-Ko)*SNR_L);
          end % End of tx antenna loop
     end % End of user loop
 end
@@ -262,8 +264,10 @@ for Ei=1:length(CSI);
         end    
     end
 end
-% plot(M,SE_NZF,'--')
-% lgd(i) = strcat({'Lower bound NLOS'}); 
+plot(M,SE_NLOS,'--')
+hold on;
+% plot(M,SE_NZF,'-*')
+lgd(i) = strcat({'Lower bound NLOS'}); 
 legend(lgd);
 grid on;
 % title(sprintfc('Spectral Efficiency MU-Massive MIMO (K = %d)', K));
