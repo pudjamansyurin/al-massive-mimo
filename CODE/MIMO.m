@@ -10,10 +10,10 @@ beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Numer \bit per symbol
 nCP = ceil(0.05*N);     % Number of cyclic Prefix (25% of NFFT)
-SNR_dB = 0:2:10;    % list of SNR [dB] values to be simulated
+SNR_dB = -10:2:20;    % list of SNR [dB] values to be simulated
 % SNR_dB = 0;
 SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
-FRM = 1;              % Number of data frame
+FRM = 100;              % Number of data frame
 tau_p = 10;
 BPU = N*2;              % (Bit/User)  
 NBPU = BPU*FRM;
@@ -21,8 +21,8 @@ NBPU = BPU*FRM;
 QAM_symbol = [-1 1; 1 1; 1 -1 ;-1 -1];
 symbol = QAM_symbol / sqrt(2); 
 Code = { 
-     'ZF' 
-     'MRT' 
+%      'ZF' 
+%      'MRT' 
      'MMSE' 
 };
 Channel = { 
@@ -31,7 +31,7 @@ Channel = {
 };
 CSI = {
     'Perfect CSI'
-%     'Imperfect CSI'    
+    'Imperfect CSI'    
 };
 
 %  ===================START SIMULATION====================
@@ -166,7 +166,7 @@ for Ei = 1:length(CSI);
                             SINR = zeros(Ko,1,N);
                             sigmaA = zeros(Mo,Mo,N);
                             for n = 1:N;
-                                [SINR(:,:,n),Sig,I,Noise,Pt,AA,Sig2] = calcSINR(A(:,:,n), Hf(:,:,n), SNR_dB, Ko, Pc);
+                                [SINR(:,:,n),Sig,I,Noise,Pt,AA,Sig2] = calcSINR(A(:,:,n), Hf(:,:,n), SNRo, Ko, Pc);
                             end
 
                             %reshape 3D to 2D matrix
