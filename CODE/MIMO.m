@@ -2,19 +2,19 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = 10;              % Number of occupied subcarrier
-N = 30;                 % Number of Rx antenna (= number of UE)
-K = 5;
+M = 100;              % Number of occupied subcarrier
+N = 100;                 % Number of Rx antenna (= number of UE)
+K = 10;
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Numer \bit per symbol
 nCP = ceil(0.05*N);     % Number of cyclic Prefix (25% of NFFT)
-% SNR_dB = -10:2:10;    % list of SNR [dB] values to be simulated
-SNR_dB = 0;
+SNR_dB = -10:2:10;    % list of SNR [dB] values to be simulated
+% SNR_dB = 0;
 SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
 FRM = 1;              % Number of data frame
-tau_p = 5;
+tau_p = 10;
 BPU = N*2;              % (Bit/User)  
 NBPU = BPU*FRM;
 
@@ -26,12 +26,12 @@ Code = {
 %      'MMSE' 
 };
 Channel = { 
-%     'LOS' 
+    'LOS' 
     'Rayleigh' 
 };
 CSI = {
-    'Perfect CSI'
-%     'Imperfect CSI'    
+%     'Perfect CSI'
+    'Imperfect CSI'    
 };
 
 %  ===================START SIMULATION====================
