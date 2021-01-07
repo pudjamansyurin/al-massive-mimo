@@ -1,6 +1,5 @@
 function [ Hf_est ] = estChannel( Hf, Xpf, N0, nf, tau_p, SNRo,fi2)
-%UNTITLED11 Summary of this function goes here
-%   Detailed explanation goes here
+
 SNRul = -5;
 SNRuldB = 10^(SNRul/10) ;
 Hft = Hf';

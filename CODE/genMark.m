@@ -1,6 +1,4 @@
 function [ mark ] = genMark( iline, icolor, ishape )
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
 
 line = {'-' '-.' '--'};
 color = {'r' 'b' 'g' 'c' 'm' 'y' 'k'}; 

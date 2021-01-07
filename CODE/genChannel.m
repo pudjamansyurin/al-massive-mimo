@@ -1,6 +1,4 @@
 function [ Ht, Hf ] = genChannel(type, K, L, M, N,beta,teta)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
 
 %======================UR-LOS channel==================
 if strcmp(type, 'LOS')
