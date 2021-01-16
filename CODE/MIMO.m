@@ -2,15 +2,15 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = 100;              % Number of occupied subcarrier
-N = 100;                 % Number of Rx antenna (= number of UE)
-K = 10;
+M = 1:10:100;              % Number of occupied subcarrier
+N = 300;                 % Number of Rx antenna (= number of UE)
+K = 1;
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Numer \bit per symbol
 nCP = ceil(0.05*N);     % Number of cyclic Prefix (25% of NFFT)
-SNR_dB = -10:2:10;    % list of SNR [dB] values to be simulated
+SNR_dB = 10;    % list of SNR [dB] values to be simulated
 % SNR_dB = 0;
 SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
 FRM = 1;              % Number of data frame
@@ -22,16 +22,16 @@ QAM_symbol = [-1 1; 1 1; 1 -1 ;-1 -1];
 symbol = QAM_symbol / sqrt(2); 
 Code = { 
      'ZF' 
-%      'MRT' 
-%      'MMSE' 
+     'MRT' 
+     'MMSE' 
 };
 Channel = { 
-    'LOS' 
+%     'LOS' 
     'Rayleigh' 
 };
 CSI = {
-%     'Perfect CSI'
-    'Imperfect CSI'    
+    'Perfect CSI'
+%     'Imperfect CSI'    
 };
 
 %  ===================START SIMULATION====================
@@ -54,6 +54,7 @@ for Ei = 1:length(CSI);
             sinteta(k) = -1+(2*k-1)/Ko;
         end
         teta = asind(sinteta);
+%         teta = -50;
         
         % Loop tx antenna --------------------------
         SE_LOS = zeros(1,length(M));
@@ -122,9 +123,10 @@ for Ei = 1:length(CSI);
                             A = zeros(Mo,Ko,N);
                             C = zeros(Mo,1,N);
                             for i = 1:N;
-                                [A(:,:,i), C(:,:,i)] = genPrecoding(Code(Ci), Ko, Mo, Hf(:,:,i), S(:,:,i),N,Pc,SNRo);
+                                [A(:,:,i), C(:,:,i), factor] = genPrecoding(Code(Ci), Ko, Mo, Hf(:,:,i), S(:,:,i),N,Pc,SNRo);
                             end
-
+                            % Calculate transmit power after precoding
+                            Ct = mean(sqrt(sum(abs(C).^2,3)));
                             % Transform to time domain
                             xt = ifft(C,N,3); % transform to time domain
 
@@ -136,7 +138,27 @@ for Ei = 1:length(CSI);
 
                             % Combine CP with signal
                             xt_CP = cat(3, CP, xt);
-
+                            xt_CP_2D = reshape(xt_CP, size(xt_CP,1), size(xt_CP,3));
+%                             ynew = Ht*xt_CP_2D;
+%                             yrem = ynew(:,2:13);
+%                             user2 = fft(yrem(2,:));
+%                             %bandingkan user 2 dengan q(2,:)
+                            
+                            % NeW Rayleigh, M = 10, K = 2, N = 12                            
+%                             zeros1 = zeros(K,1);
+%                             zeros2 = zeros(K,2);
+%                             zeros3 = zeros(K,3);
+%                             yr1 = Ht(:,:,1)*xt_CP_2D;
+%                             yr2 = [zeros1,Ht(:,:,2)*xt_CP_2D(:,1:length(xt_CP_2D)-1)]; 
+%                             yr3 = [zeros2,Ht(:,:,3)*xt_CP_2D(:,1:length(xt_CP_2D)-2)];  
+%                             yr4 = [zeros3,Ht(:,:,4)*xt_CP_2D(:,1:length(xt_CP_2D)-3)];  
+%                             jumlah = yr1+yr2+yr3+yr4;
+%                             yrrem = jumlah(:,2:13);
+%                             for i = 1:2;
+%                                 user(i,:) = fft(yrrem(i,:)); %sama dengan yf sebelumnya
+%                             end
+                            
+                        
                             %===================RECEIVER SIDE=========================
                             % Remove cyclic prefix
                             xt_rem = xt_CP(:,1, nCP+1:length(xt_CP));
@@ -166,7 +188,7 @@ for Ei = 1:length(CSI);
                             SINR = zeros(Ko,1,N);
                             sigmaA = zeros(Mo,Mo,N);
                             for n = 1:N;
-                                [SINR(:,:,n),Sig,I,Noise,Pt,AA,Sig2] = calcSINR(A(:,:,n), Hf(:,:,n), SNRo, Ko, Pc);
+                                [SINR(:,:,n),Sig,I,Noise,Pt,AA,Sig2] = calcSINR(A(:,:,n), Hf(:,:,n), SNR_L, Ko, Pc, SNR_L);
                             end
 
                             %reshape 3D to 2D matrix
@@ -201,7 +223,7 @@ for Ei = 1:length(CSI);
 
                 % Sum spectral Efficiency all user
                 for Ci=1:length(Code);
-                    SE(Ei, Chi, Ki,Ci,Mi) = sum(meanRk(Ci,:,:));
+                    SE(Ei, Chi, Ki,Ci,Mi) = sum(meanRk(Ci,:,:),2);
                 end
             end  
              % =======================Analytical SE LOS=========================
@@ -242,6 +264,14 @@ for Ei=1:length(CSI);
         end
     end 
 end
+
+% if M == 1 && K == 1
+%     save('siso1.mat', 'RER');
+% else
+%     load('siso1.mat', 'RER');
+%     semilogy(SNR_dB, RER, genMark(Chi,Ci+1,Ei+1));
+%     lgd(i) = strcat({'SISO'}); 
+% end
 grid on;
 legend(lgd);
 xlabel('SNR(dB)');
@@ -255,15 +285,29 @@ for Ei=1:length(CSI);
         for Ci=1:length(Code);
             SEE = SE(Ei,Chi,Ki,Ci,:);
             SEX = reshape(SEE, [1, numel(SEE)]);
-            plot(M, SEX, genMark(Chi, Ci, Ei));
+            m = (M>=20);
+            plot(M(m), SEX(m), genMark(Chi, Ci, Ei));
             hold on;    
             lgd(i) = strcat(CSI(Ei), {', '}, Channel(Chi), {', '}, Code(Ci)); 
             i = i + 1;
         end    
     end
 end
-plot(M,SE_NLOS,'--')
+
+% if K == 1
+%      SEX0 = SEX(1);
+%      save('siso2.mat', 'SEX0');
+% else
+%      load('siso2.mat', 'SEX0');
+%      plot(1, SEX0, 'x');
+%      hold on;    
+%      lgd(i) = strcat({'SISO'}); 
+%      i = i + 1;
+% end
+
+plot(M(m),SE_NLOS(m),'--')
 lgd(i) = strcat({'Lower bound NLOS'}); 
+
 legend(lgd);
 grid on;
 % title(sprintfc('Spectral Efficiency MU-Massive MIMO (K = %d)', K));

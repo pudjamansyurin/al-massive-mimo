@@ -1,4 +1,4 @@
-function [A, C] = genPrecoding(type,K,M,Hf,S,N,Pc,SNRo)
+function [A, C, factor] = genPrecoding(type,K,M,Hf,S,N,Pc,SNRo)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -14,7 +14,8 @@ else
     A = Hf';
 end
 
-factor = factor+trace(A*A')/N;    %Precoding Factor
+factor = mean(trace(A*A'));    %Precoding Factor
+% factor = factor + trace(A*A')/N;
 A = A./sqrt(factor); % Scaled output
 % % Precoded Vector
 C = A*S;  

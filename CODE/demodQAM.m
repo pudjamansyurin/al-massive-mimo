@@ -1,4 +1,4 @@
-function [ bSerial ] = demodQAM( b, symbolQAM )
+function [bSerial ] = demodQAM( b, symbolQAM )
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
 
