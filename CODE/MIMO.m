@@ -2,9 +2,9 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = 1:10:100;              % Number of occupied subcarrier
-N = 300;                 % Number of Rx antenna (= number of UE)
-K = 1;
+M = 20:10:100;              % Number of occupied subcarrier
+N = 100;                 % Number of Rx antenna (= number of UE)
+K = 10;
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
@@ -14,7 +14,7 @@ SNR_dB = 10;    % list of SNR [dB] values to be simulated
 % SNR_dB = 0;
 SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
 FRM = 1;              % Number of data frame
-tau_p = 10;
+tau_p = 30;
 BPU = N*2;              % (Bit/User)  
 NBPU = BPU*FRM;
 
@@ -305,8 +305,8 @@ end
 %      i = i + 1;
 % end
 
-plot(M(m),SE_NLOS(m),'--')
-lgd(i) = strcat({'Lower bound NLOS'}); 
+% plot(M(m),SE_NLOS(m),'--')
+% lgd(i) = strcat({'Lower bound NLOS'}); 
 
 legend(lgd);
 grid on;
@@ -316,7 +316,7 @@ ylabel('Efisiensi spektrum (Bit/s/Hz)');
     
 % Plot Spectral Efficiency MU-Massive MIMO (User)
 figure(3);
-Coding = find(ismember(Code, 'ZF'));
+Coding = find(ismember(Code, 'MMSE'));
 for Ki = 1:length(K);
     SEE = SE(1,Chi,Ki,Coding,:);
     SEX3 = reshape(SEE, [1, numel(SEE)]);
@@ -330,7 +330,7 @@ ylabel('SEfisiensi spektrum (Bit/s/Hz)');
 
 % Plot Spectral Efficiency MU-Massive MIMO (User)
 figure(4);
-Coding = find(ismember(Code, 'ZF'));
+Coding = find(ismember(Code, 'MMSE'));
 for Mi = 1:length(M);
     SEE = SE(1,Chi,:,Coding,Mi);
     SEX4 = reshape(SEE, [1, numel(SEE)]);

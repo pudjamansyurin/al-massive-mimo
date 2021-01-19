@@ -8,7 +8,7 @@ for Ki = 1:K;
 end
 
 % Signal Power
-Sig =   SNR_L*diag(abs(Hf*A).^2);
+Sig = SNR_L*diag(abs(Hf*A).^2);
 Sig2 = abs(Hf*A).^2;
 % Interference Power
 I = SNR_L*sum(abs(Hf*A).^2,2)-Sig; 
