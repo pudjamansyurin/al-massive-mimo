@@ -10,8 +10,8 @@ beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Numer \bit per symbol
 nCP = ceil(0.05*N);     % Number of cyclic Prefix (25% of NFFT)
-SNR_dB = 10;    % list of SNR [dB] values to be simulated
-% SNR_dB = 0;
+% SNR_dB = 10;    % list of SNR [dB] values to be simulated
+SNR_dB = 10;
 SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
 FRM = 1;              % Number of data frame
 tau_p = 30;
@@ -21,12 +21,12 @@ NBPU = BPU*FRM;
 QAM_symbol = [-1 1; 1 1; 1 -1 ;-1 -1];
 symbol = QAM_symbol / sqrt(2); 
 Code = { 
-     'ZF' 
-     'MRT' 
+%      'ZF' 
+%      'MRT' 
      'MMSE' 
 };
 Channel = { 
-%     'LOS' 
+    'LOS' 
     'Rayleigh' 
 };
 CSI = {
