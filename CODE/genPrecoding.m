@@ -11,7 +11,7 @@ elseif strcmp(type, 'ZF')
     A = Hf'/(Hf*Hf');
 else
     % MRT Precodng
-    A = Hf';
+    A = 1/M*Hf';
 end
 
 factor = mean(trace(A*A'));    %Precoding Factor

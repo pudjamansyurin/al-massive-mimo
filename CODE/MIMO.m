@@ -2,16 +2,16 @@
 clear all; close all; clc;         
 
 % M = 50;               % Number of Tx antenna (in one BS)
-M = 20:10:100;              % Number of occupied subcarrier
+M = [30 100];              % Number of occupied subcarrier
 N = 100;                 % Number of Rx antenna (= number of UE)
-K = 10;
+K = 5:5:50;
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Numer \bit per symbol
 nCP = ceil(0.05*N);     % Number of cyclic Prefix (25% of NFFT)
 % SNR_dB = 10;    % list of SNR [dB] values to be simulated
-SNR_dB = 10;
+SNR_dB = 0;
 SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
 FRM = 1;              % Number of data frame
 tau_p = 30;
@@ -22,11 +22,11 @@ QAM_symbol = [-1 1; 1 1; 1 -1 ;-1 -1];
 symbol = QAM_symbol / sqrt(2); 
 Code = { 
 %      'ZF' 
-%      'MRT' 
-     'MMSE' 
+     'MRT' 
+%      'MMSE' 
 };
 Channel = { 
-    'LOS' 
+%     'LOS' 
     'Rayleigh' 
 };
 CSI = {
@@ -316,7 +316,7 @@ ylabel('Efisiensi spektrum (Bit/s/Hz)');
     
 % Plot Spectral Efficiency MU-Massive MIMO (User)
 figure(3);
-Coding = find(ismember(Code, 'MMSE'));
+Coding = find(ismember(Code, 'MRT'));
 for Ki = 1:length(K);
     SEE = SE(1,Chi,Ki,Coding,:);
     SEX3 = reshape(SEE, [1, numel(SEE)]);
@@ -330,7 +330,7 @@ ylabel('SEfisiensi spektrum (Bit/s/Hz)');
 
 % Plot Spectral Efficiency MU-Massive MIMO (User)
 figure(4);
-Coding = find(ismember(Code, 'MMSE'));
+Coding = find(ismember(Code, 'MRT'));
 for Mi = 1:length(M);
     SEE = SE(1,Chi,:,Coding,Mi);
     SEX4 = reshape(SEE, [1, numel(SEE)]);
