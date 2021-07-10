@@ -1,0 +1,11 @@
+Point yang telah direvisi:
+1. Judul
+2. Abstrak
+3. Rumusan masalah Hal. 3
+4. Tujuan Hal. 3
+5. Gambar metodologi Hal. 39 dan 40
+6. Linier precoding Hal 27
+7. Proses pembentukan linier precoding Hal. 44
+8. Pembahasan perbandingan kinerja linier precoding Hal. 72-76
+9. Tambahan subbab diskusi Hal.87
+10. Kesimpulan Hal. 91

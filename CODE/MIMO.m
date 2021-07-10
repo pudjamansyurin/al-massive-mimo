@@ -1,29 +1,27 @@
 % Clear screen
 clear all; close all; clc;         
-
-% M = 50;               % Number of Tx antenna (in one BS)
-M = [30 100];              % Number of occupied subcarrier
-N = 100;                 % Number of Rx antenna (= number of UE)
-K = 5:5:50;
+            
+N = 300;                % Number of subcarrier
+M = 20:10:100;          % Number of Tx antenna (in one BS) 
+K = 10;                 % Number of Rx antenna (= number of UE)
 L = 4;                  % Channel tap frequency selective
 beta = 1;
 BPS = 2;                % (Bit/Symbol) Number of bits 
 nBit = 2;               % Numer \bit per symbol
 nCP = ceil(0.05*N);     % Number of cyclic Prefix (25% of NFFT)
-% SNR_dB = 10;    % list of SNR [dB] values to be simulated
-SNR_dB = 0;
-SNR_L = 10^(SNR_dB(length(SNR_dB))/10);
-FRM = 1;              % Number of data frame
-tau_p = 30;
+SNR_dB = 0;            % List of SNR [dB] values to be simulated
+SNR_L = 10^(SNR_dB(length(SNR_dB))/10); % Linear SNR
+FRM = 1;                % Number of data frame
+tau_p = 30;             % Number of pilot
 BPU = N*2;              % (Bit/User)  
-NBPU = BPU*FRM;
+NBPU = BPU*FRM;         % Number of BPU
 
 QAM_symbol = [-1 1; 1 1; 1 -1 ;-1 -1];
 symbol = QAM_symbol / sqrt(2); 
 Code = { 
-%      'ZF' 
+     'ZF'
      'MRT' 
-%      'MMSE' 
+     'MMSE' 
 };
 Channel = { 
 %     'LOS' 
@@ -54,7 +52,6 @@ for Ei = 1:length(CSI);
             sinteta(k) = -1+(2*k-1)/Ko;
         end
         teta = asind(sinteta);
-%         teta = -50;
         
         % Loop tx antenna --------------------------
         SE_LOS = zeros(1,length(M));
@@ -139,25 +136,6 @@ for Ei = 1:length(CSI);
                             % Combine CP with signal
                             xt_CP = cat(3, CP, xt);
                             xt_CP_2D = reshape(xt_CP, size(xt_CP,1), size(xt_CP,3));
-%                             ynew = Ht*xt_CP_2D;
-%                             yrem = ynew(:,2:13);
-%                             user2 = fft(yrem(2,:));
-%                             %bandingkan user 2 dengan q(2,:)
-                            
-                            % NeW Rayleigh, M = 10, K = 2, N = 12                            
-%                             zeros1 = zeros(K,1);
-%                             zeros2 = zeros(K,2);
-%                             zeros3 = zeros(K,3);
-%                             yr1 = Ht(:,:,1)*xt_CP_2D;
-%                             yr2 = [zeros1,Ht(:,:,2)*xt_CP_2D(:,1:length(xt_CP_2D)-1)]; 
-%                             yr3 = [zeros2,Ht(:,:,3)*xt_CP_2D(:,1:length(xt_CP_2D)-2)];  
-%                             yr4 = [zeros3,Ht(:,:,4)*xt_CP_2D(:,1:length(xt_CP_2D)-3)];  
-%                             jumlah = yr1+yr2+yr3+yr4;
-%                             yrrem = jumlah(:,2:13);
-%                             for i = 1:2;
-%                                 user(i,:) = fft(yrrem(i,:)); %sama dengan yf sebelumnya
-%                             end
-                            
                         
                             %===================RECEIVER SIDE=========================
                             % Remove cyclic prefix
@@ -166,15 +144,17 @@ for Ei = 1:length(CSI);
                             % Transform to freq domain
                             xf = fft(xt_rem,N,3);                        
 
+                            % SISO AWGN
                             % Multipliying channel and signal for each subcarrier
                             Hfy = zeros(Ko,1,N);
                             for i = 1:N;  
                                 Hfy(:,:,i) = Hf(:,:,i)*xf(:,:,i);
+                            
                             end
 
                             % noise variance
                             yf = Hfy + sqrt(N0)*nf;
-
+                            
                             % Detection (Demodulasi QAM)
                             yQAM = reshape(yf, size(yf,1), size(yf,3));
                             for i = 1:Ko;
@@ -244,7 +224,10 @@ for Ei = 1:length(CSI);
         SE_NLOS(Mi) = Ko*log2(1+((Mo-1)./((Ko-1)*(Mo-1)/Mo+Ko+1/SNR_L)));
         % =======================Analytical SE NLOS zf======================
         SE_NZF(Mi) = Ko*log2(1+Pc*(Mo-Ko)*SNR_L);
-         end % End of tx antenna loop
+        %========================aAnalytical Shannon==================
+        Hts = sqrt(0.5/L)*(randn(Ko,Mo) + 1i*randn(Ko,Mo));
+        SE_SHANNON(Mi) = log2(det(eye(Mo,Mo)+SNR_L*(Hts(Mi)'*Hts(Mi))));
+        end % End of tx antenna loop
     end % End of user loop
 end
 
@@ -285,8 +268,7 @@ for Ei=1:length(CSI);
         for Ci=1:length(Code);
             SEE = SE(Ei,Chi,Ki,Ci,:);
             SEX = reshape(SEE, [1, numel(SEE)]);
-            m = (M>=20);
-            plot(M(m), SEX(m), genMark(Chi, Ci, Ei));
+            plot(M, SEX, genMark(Chi, Ci, Ei));
             hold on;    
             lgd(i) = strcat(CSI(Ei), {', '}, Channel(Chi), {', '}, Code(Ci)); 
             i = i + 1;
@@ -305,9 +287,12 @@ end
 %      i = i + 1;
 % end
 
-% plot(M(m),SE_NLOS(m),'--')
-% lgd(i) = strcat({'Lower bound NLOS'}); 
+% plot(M(m),SE_LOS(m),'--')
+% lgd(i) = strcat({'Lower bound LOS'}); 
 
+% hold on;
+% plot(M,abs(SE_SHANNON));
+% lgd(i) = strcat({'Sum Capacity Shannon'}); 
 legend(lgd);
 grid on;
 % title(sprintfc('Spectral Efficiency MU-Massive MIMO (K = %d)', K));
@@ -316,7 +301,7 @@ ylabel('Efisiensi spektrum (Bit/s/Hz)');
     
 % Plot Spectral Efficiency MU-Massive MIMO (User)
 figure(3);
-Coding = find(ismember(Code, 'MRT'));
+Coding = find(ismember(Code, 'MMSE'));
 for Ki = 1:length(K);
     SEE = SE(1,Chi,Ki,Coding,:);
     SEX3 = reshape(SEE, [1, numel(SEE)]);
@@ -330,7 +315,7 @@ ylabel('SEfisiensi spektrum (Bit/s/Hz)');
 
 % Plot Spectral Efficiency MU-Massive MIMO (User)
 figure(4);
-Coding = find(ismember(Code, 'MRT'));
+Coding = find(ismember(Code, 'MMSE'));
 for Mi = 1:length(M);
     SEE = SE(1,Chi,:,Coding,Mi);
     SEX4 = reshape(SEE, [1, numel(SEE)]);
@@ -356,7 +341,8 @@ figure(6);
 plot(M,SE_LOS);
 hold on;
 plot(M,SE_NLOS);
-legend('LOS','NLOS');
+
+legend('LOS','NLOS','SHANNON');
 title('Analytical Spectral Efficiency');
 xlabel('Jumlah Antena BTS (M)');
 ylabel('Spectral Efficiency (Bit/s/Hz)');
